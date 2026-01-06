@@ -1,0 +1,29 @@
+name: Hello World Workflow
+
+# Triggers: When should this run?
+on:
+  push:
+    branches: [ "main" ] # Runs on every push to main
+  workflow_dispatch:     # Allows you to run this manually from the Actions tab
+
+jobs:
+  # The ID of the job
+  say-hello-job:
+    # The type of runner the job will run on
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Pulls the code from your repo onto the runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. A simple shell command
+      - name: Run a one-line script
+        run: echo "Hello, World! This is running in a GitHub-hosted runner."
+
+      # 3. Running multiple commands
+      - name: Run a multi-line script
+        run: |
+          echo "Current Path: $(pwd)"
+          echo "System Info: $(uname -a)"
+          ls -lah
