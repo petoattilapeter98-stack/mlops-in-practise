@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-west-2
 
 jobs:
   plan:
@@ -35,7 +35,7 @@ jobs:
     name: "Terraform Apply"
     needs: plan             # Ensures Apply only starts after Plan finishes
     runs-on: ubuntu-latest
-    environment: production  # This triggers the manual approval gate
+    environment: Production  # This triggers the manual approval gate
     
     steps:
       - name: Checkout Code
