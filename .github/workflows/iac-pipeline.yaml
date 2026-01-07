@@ -26,10 +26,10 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform -chdir=infrastructure init
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform -chdir=infrastructure plan
 
   apply:
     name: "Terraform Apply"
@@ -52,7 +52,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform -chdir=infrastructure init
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform -chdir=infrastructure apply -auto-approve
