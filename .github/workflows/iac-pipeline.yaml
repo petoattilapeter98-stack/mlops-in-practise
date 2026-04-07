@@ -3,6 +3,7 @@ name: "Terraform Experiment"
 on:
   push:
     branches: [ "main" ]
+  pull_request:
 
 env:
   AWS_REGION: us-west-2
@@ -36,6 +37,7 @@ jobs:
     needs: plan             # Ensures Apply only starts after Plan finishes
     runs-on: ubuntu-latest
     environment: Production  # This triggers the manual approval gate
+    if: github.event_name == 'push'
     
     steps:
       - name: Checkout Code
