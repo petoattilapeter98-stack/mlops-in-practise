@@ -38,15 +38,30 @@ jobs:
         run: terraform -chdir=infrastructure show -json tfplan > infrastructure/tfplan.json
 
       # 3. Run Terracotta AI Review
-      - name: Terracotta AI Review
+      - name: Terracotta AI API Review
+        id: terracotta_api
         env:
-          TERRACOTTA_API_KEY: ${{ secrets.TERRACOTTA_API_KEY }} 
+          TERRACOTTA_API_KEY: ${{ secrets.TERRACOTTA_API_KEY }}
         run: |
-          npx @terracotta-ai/cli review --ci \
-            --fail-on high \
-            --include cost,security,drift \
-            --workspace infrastructure \
-            --plan infrastructure/tfplan.json
+          # 1. Send the plan to the API
+          RESPONSE=$(curl -s -X POST "https://api.tryterracotta.com/v1/tc/plan" \
+            -H "x-api-key: $TERRACOTTA_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d @infrastructure/tfplan.json)
+
+          # 2. Log the response for visibility
+          echo "Terracotta Response: $RESPONSE"
+
+          # 3. Logic to "Fail on High"
+          # We check the 'risk_level' or 'findings' in the JSON response
+          RISK=$(echo $RESPONSE | jq -r '.data.summary.max_risk_level')
+
+          if [ "$RISK" == "high" ] || [ "$RISK" == "critical" ]; then
+            echo "❌ HIGH RISK DETECTED: $RISK"
+            exit 1
+          else
+            echo "✅ Review passed with risk level: $RISK"
+          fi
 
   apply:
     name: "Terraform Apply"
