@@ -10,7 +10,7 @@ env:
 
 jobs:
   plan:
-    name: "Terraform Plan"
+    name: "Terraform Plan & Review"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -29,8 +29,24 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=infrastructure init
 
+      # 1. Generate a plan file
       - name: Terraform Plan
-        run: terraform -chdir=infrastructure plan
+        run: terraform -chdir=infrastructure plan -out=tfplan
+
+      # 2. Convert the plan to JSON (Terracotta and other tools require JSON format)
+      - name: Export Plan to JSON
+        run: terraform -chdir=infrastructure show -json tfplan > infrastructure/tfplan.json
+
+      # 3. Run Terracotta AI Review
+      - name: Terracotta AI Review
+        env:
+          TERRACOTTA_API_KEY: ${{ secrets.TERRACOTTA_API_KEY }} 
+        run: |
+          npx @terracotta/cli review --ci \
+            --fail-on high \
+            --include cost,security,drift \
+            --workspace infrastructure \
+            --plan infrastructure/tfplan.json
 
   apply:
     name: "Terraform Apply"
