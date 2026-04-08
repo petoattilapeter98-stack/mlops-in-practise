@@ -42,7 +42,7 @@ jobs:
         env:
           TERRACOTTA_API_KEY: ${{ secrets.TERRACOTTA_API_KEY }} 
         run: |
-          npx @terracotta/cli review --ci \
+          npx @terracotta-ai/cli review --ci \
             --fail-on high \
             --include cost,security,drift \
             --workspace infrastructure \
