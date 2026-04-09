@@ -71,7 +71,6 @@ resource "aws_db_instance" "postgres" {
   allocated_storage      = 2000               # 2000 GB storage
   storage_type           = "gp3"
   iops                   = 12000              # High IOPS for gp3
-  throughput             = 1000               # High throughput
   multi_az               = true               # Multi-AZ for higher availability and cost
   db_name                = "mlopsdb"
   username               = "mlopsuser"
