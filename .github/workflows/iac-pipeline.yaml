@@ -10,7 +10,7 @@ env:
 
 jobs:
   plan:
-    name: "Terraform Plan & Review"
+    name: "Terraform Plan"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
