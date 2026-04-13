@@ -84,3 +84,4 @@ resource "aws_db_instance" "postgres" {
     Name = "${local.project_name}-postgres"
   }
 }
+
