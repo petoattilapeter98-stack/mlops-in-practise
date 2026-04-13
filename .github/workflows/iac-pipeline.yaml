@@ -29,55 +29,6 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=infrastructure init
 
-      # 1. Generate a plan file
-      - name: Terraform Plan
-        run: terraform -chdir=infrastructure plan -out=tfplan
-
-      # # 2. Convert the plan to JSON (Terracotta and other tools require JSON format)
-      # - name: Export Plan to JSON
-      #   run: terraform -chdir=infrastructure show -json tfplan > infrastructure/tfplan.json
-
-      # # 3. Run Terracotta AI Review
-      # - name: Terracotta AI Plan Analysis
-      #   env:
-      #     TERRACOTTA_API_KEY: ${{ secrets.TERRACOTTA_API_KEY }}
-      #   run: |
-      #     cat infrastructure/tfplan.json
-      #     # 1. Prepare the payload (Sending the plan as an object)
-      #     # We use --argjson to ensure the plan remains a valid JSON object inside the 'plan' key
-      #     jq -n --argjson p "$(cat infrastructure/tfplan.json)" '{plan: $p}' > payload.json
-
-      #     # 2. Call the PLAN endpoint (not the review endpoint)
-      #     RESPONSE=$(curl -s -X POST "https://api.tryterracotta.com/v1/tc/plan" \
-      #       -H "x-api-key: $TERRACOTTA_API_KEY" \
-      #       -H "Content-Type: application/json" \
-      #       -d @payload.json)
-
-      #     # 3. Log the full response for debugging
-      #     echo "Full API Response: $RESPONSE"
-
-      #     # 4. Safety Check: Did the API return success?
-      #     SUCCESS=$(echo $RESPONSE | jq -r '.success')
-          
-      #     if [ "$SUCCESS" != "true" ]; then
-      #       ERROR_MSG=$(echo $RESPONSE | jq -r '.error.message // "Unknown Error"')
-      #       echo "❌ Terracotta API Error: $ERROR_MSG"
-      #       exit 1
-      #     fi
-
-      #     # 5. Check Risk Levels
-      #     # We use '?' to avoid the "Cannot iterate over null" error if data is missing
-      #     MAX_RISK=$(echo $RESPONSE | jq -r '.data.summary.max_risk_level // "none"')
-          
-      #     echo "Current Infrastructure Risk: $MAX_RISK"
-
-      #     if [ "$MAX_RISK" == "high" ] || [ "$MAX_RISK" == "critical" ]; then
-      #       echo "❌ PIPELINE HALTED: High risk infrastructure changes detected."
-      #       exit 1
-      #     else
-      #       echo "✅ PASSED: Risk level is acceptable."
-      #     fi
-
   apply:
     name: "Terraform Apply"
     needs: plan             # Ensures Apply only starts after Plan finishes
