@@ -4,3 +4,4 @@ resource "aws_s3_bucket" "mlflow_bucket" {
 
   tags = var.tags
 }
+
