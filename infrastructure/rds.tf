@@ -72,9 +72,9 @@ resource "aws_db_instance" "postgres" {
   storage_type           = "gp3"
   iops                   = 12000              # High IOPS for gp3
   multi_az               = true               # Multi-AZ for higher availability and cost
-  db_name                = "mlopsdb"
-  username               = "mlopsuser"
-  password               = "securepassword123"  # In production, use secrets manager
+  db_name                = "***"  # Use secrets
+  username               = "***"  # Use secrets
+  password               = "***"  # Use secrets
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   backup_retention_period = 30
